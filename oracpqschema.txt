@@ -1,0 +1,515 @@
+﻿{
+  "$schema": "http://json-schema.org/draft-04/hyper-schema#",
+  "allOf": [
+    {
+      "$ref": "http://json-schema.org/draft-04/hyper-schema#"
+    }
+  ],
+  "definitions": {
+    "resourceRowState": {
+      "title": "state",
+      "type": "object",
+      "description": "Captures the current state of the resource row. Of available properties, only those that are applicable and whose values are known in the current context are included.",
+      "properties": {
+        "updatable": {
+          "title": "Updatable",
+          "type": "boolean",
+          "description": "Boolean value that specifies whether the row can be updated."
+        },
+        "deletable": {
+          "title": "Deletable",
+          "type": "boolean",
+          "description": "Boolean value that specifies whether the row can be deleted."
+        },
+        "hasError": {
+          "title": "Has Error",
+          "type": "boolean",
+          "description": "Boolean value that specifies whether any error that occurred has been assigned to the row itself."
+        },
+        "hasWarning": {
+          "title": "Has Warning",
+          "type": "boolean",
+          "description": "Boolean value that specifies whether any warning that was issued has been assigned to the row itself."
+        },
+        "groups": {
+          "title": "Groups",
+          "type": "object",
+          "description": "Captures the current state of each group whose state was requested. The object contains one property per group, where the property name is the expression string that uniquely identifies the group.",
+          "patternProperties": {
+            "^[0-9,a-z,A-Z,_]*$": {
+              "$ref": "#/definitions/groupState"
+            }
+          }
+        },
+        "actions": {
+          "$ref": "#/definitions/actions"
+        },
+        "messages": {
+          "$ref": "#/definitions/messages"
+        },
+        "attributes": {
+          "title": "Attributes",
+          "type": "object",
+          "description": "Captures the current state of each attribute whose state was requested. The object contains one property per group, where the property name is the resource field name for the attribute.",
+          "patternProperties": {
+            "^[0-9,a-z,A-Z,_]*$": {
+              "$ref": "#/definitions/attributeState"
+            }
+          }
+        }
+      }
+    },
+    "resourceCollectionState": {
+      "title": "state",
+      "type": "object",
+      "description": "Captures the current state of the resource collection. Of available properties, only those that are applicable and whose values are known in the current context are included.",
+      "properties": {
+        "insertable": {
+          "title": "Insertable",
+          "type": "boolean",
+          "description": "Boolean value that specifies whether new rows can be inserted into the collection."
+        },
+        "queryable": {
+          "title": "Queryable",
+          "type": "boolean",
+          "description": "Boolean value that specifies whether the rows in the collection can be queried."
+        },
+        "sortable": {
+          "title": "Sortable",
+          "type": "boolean",
+          "description": "Boolean value that specifies whether the rows in the collection can be sorted."
+        },
+        "hasError": {
+          "title": "Has Error",
+          "type": "boolean",
+          "description": "Boolean value that specifies whether any error that occurred has been assigned to the collection itself."
+        },
+        "hasWarning": {
+          "title": "Has Warning",
+          "type": "boolean",
+          "description": "Boolean value that specifies whether any warning that was issued has been assigned to the collection itself."
+        },
+        "actions": {
+          "$ref": "#/definitions/actions"
+        },
+        "messages": {
+          "$ref": "#/definitions/messages"
+        },
+        "defaultRowState": {
+          "title": "Default Row State",
+          "type": "object",
+          "description": "Specifies state data that should be used when any corresponding ",
+          "$ref": "#/definitions/resourceRowState"
+        }
+      }
+    },
+    "actions": {
+      "title": "Actions",
+      "type": "object",
+      "description": "Captures the current state of each action whose state was requested. The object contains one property per action, where the property name is the variable name for the action.",
+      "patternProperties": {
+        "^[0-9,a-z,A-Z,_]*$": {
+          "$ref": "#/definitions/actionState"
+        }
+      }
+    },
+    "actionState": {
+      "title": "Action State",
+      "type": "object",
+      "description": "Captures the current state of the action. Of available properties, only those that are applicable and whose values are known in the current context are included.",
+      "properties": {
+        "visible": {
+          "title": "Visible",
+          "type": "boolean",
+          "description": "Boolean value that specifies whether the action is visible to the user."
+        },
+        "enabled": {
+          "title": "Enabled",
+          "type": "boolean",
+          "description": "Boolean value that specifies whether the action can be executed."
+        }
+      }
+    },
+    "attributeState": {
+      "title": "Attribute State",
+      "type": "object",
+      "description": "Captures the current state of the attribute. Of available properties, only those that are applicable and whose values are known in the current context are included.",
+      "properties": {
+        "updatable": {
+          "title": "Updatable",
+          "type": "boolean",
+          "description": "Boolean value that specifies whether the attribute's value can be updated."
+        },
+        "hasError": {
+          "title": "Has Error",
+          "type": "boolean",
+          "description": "Boolean value that specifies whether any error that occurred has been assigned to the attribute."
+        },
+        "hasWarning": {
+          "title": "Has Warning",
+          "type": "boolean",
+          "description": "Boolean value that specifies whether any warning that was issued has been assigned to the attribute."
+        },
+        "messages": {
+          "$ref": "#/definitions/messages"
+        },
+        "required": {
+          "title": "Required",
+          "type": "boolean",
+          "description": "Boolean value that specifies whether the attribute is required to have a non-empty value. This property may be omitted, in which case the attribute's metadata may specify whether it is always required."
+        },
+        "visible": {
+          "title": "Visible",
+          "type": "boolean",
+          "description": "Boolean value that specifies whether the attribute is visible to the user."
+        },
+        "hasConstraintViolation": {
+          "title": "Has Constraint Violation",
+          "type": "boolean",
+          "description": "Boolean value that specifies whether the attribute's value violates any constraint or validation that has been triggered."
+        },
+        "domain": {
+          "$ref": "#/definitions/domainState"
+        },
+        "highlighted": {
+          "title": "Highlighted",
+          "type": "boolean",
+          "description": "Boolean value that specifies whether the attribute has been highlighted in order to draw special attention to it."
+        }
+      }
+    },
+    "domainState": {
+      "title": "Domain",
+      "type": "object",
+      "description": "Captures the current state of the domain. Of available properties, only those that are applicable and whose values are known in the current context are included.",
+      "properties": {
+        "availableElements": {
+          "title": "Available Elements",
+          "type": "array",
+          "description": "Array of elements in the domain that are applicable to the current context.",
+          "items": {
+            "$ref": "#/definitions/domainStateElement"
+          }
+        },
+        "constraintType": {
+          "title": "Constraint Type",
+          "enum": [
+            "ALLOWED",
+            "DISALLOWED"
+          ],
+          "description": "Enum value that specifies how to use the constraintElements array. If ALLOWED, only elements in constraintElements are allowed to be selected. If DISALLOWED, only elements in constraintElements are not allowed to be selected."
+        },
+        "constraintList": {
+          "title": "Constraint List",
+          "type": "array",
+          "description": "Array of elements in the domain that have been marked as allowed or disallowed, depending on the constraintType, by a constraint or validation that has been triggered.",
+          "items": {
+            "type": "string",
+            "description": "String value of an element's unique identifier."
+          }
+        }
+      }
+    },
+    "domainStateElement": {
+      "title": "Domain State Element",
+      "type": "object",
+      "description": "Captures the core data of an element in a domain.",
+      "properties": {
+        "value": {
+          "title": "Value",
+          "type": "string",
+          "description": "String value of the element's unique identifier."
+        },
+        "displayValue": {
+          "title": "Display Text",
+          "type": "string",
+          "description": "String value of the element's display text, already translated/formatted according to the user's preferences."
+        }
+      }
+    },
+    "groupState": {
+      "title": "Group State",
+      "type": "object",
+      "description": "Captures the current state of the group. Of available properties, only those that are applicable and whose values are known in the current context are included.",
+      "properties": {
+        "visible": {
+          "title": "Visible",
+          "type": "boolean",
+          "description": "Boolean value that specifies whether the group is visible to the user."
+        },
+        "hasError": {
+          "title": "Has Error",
+          "type": "boolean",
+          "description": "Boolean value that specifies whether any error that occurred has been assigned to the group."
+        },
+        "highlighted": {
+          "title": "Highlighted",
+          "type": "boolean",
+          "description": "Boolean value that specifies whether the group has been highlighted in order to draw special attention to it."
+        }
+      }
+    },
+    "messages": {
+      "title": "Messages",
+      "type": "array",
+      "description": "Array of messages that have been generated for a specific object.",
+      "items": {
+        "type": "string",
+        "description": "An error, warning, or informational message."
+      }
+    },
+    "singularResource": {
+      "title": "Singular Resource",
+      "description": "Oracle base singular resource schema definition.",
+      "type": "object",
+      "properties": {
+        "links": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/instanceLink"
+          }
+        }
+      },
+      "links": [
+        {
+          "href": "#",
+          "rel": "describedby"
+        }
+      ]
+    },
+    "queryDef": {
+      "title": "Query Definition",
+      "description": "Captures the query definition for the current resource request",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/singularResource"
+        }
+      ],
+      "properties": {
+        "totalResults": {
+          "type": "boolean",
+          "default": false,
+          "description": "Boolean value that specifies whether to calculate the totalResults property. By default, this value is set to false indicating that totalResults is not calculated."
+        },
+        "q": {
+          "type": "string",
+          "description": "Filter (a “where”clause) to restrict the items returned in the collection. By default, no filtering is applied."
+        },
+        "limit": {
+          "type": "integer",
+          "description": "Positive integer value that specifies the maximum number of items returned by the server."
+        },
+        "offset": {
+          "type": "integer",
+          "description": "Non-negative integer values that specifies the index of the first item to be returned. The offset index begins at 0. By default, the offset is 0, which returns all items starting from the first item in the collection.",
+          "minimum": 0,
+          "default": 0
+        },
+        "state": {
+          "type": "boolean",
+          "default": false,
+          "description": "Boolean value that specifies whether to calculate the state property. By default, this value is set to false indicating that state is not calculated."
+        },
+        "orderBy": {
+          "description": "Array of field names, each optionally followed by asc or desc, that specifies the order of items returned in the response payload.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "expand": {
+          "description": "Array of child resource names that you want to expand so that the contents return with the parent in the same request.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "fields": {
+          "description": "Array of field names that you wanted returned in a request.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "excludeFieldTypes": {
+          "description": "Array of field names that you want to exclude in the response",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "actions": {
+          "description": "Array of actions names, whose state is requested in the state object response.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "groups": {
+          "description": "Array of group names, whose state is requested in the state object response.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "expandedDomains": {
+          "description": "Array of field names, whose expanded domains are requested in the state object response.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "childDefs": {
+          "description": "Array of child query definitions, allows you to specify query requests for child resources within current resource request query.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/childQueryDef"
+          }
+        }
+      }
+    },
+    "childQueryDef": {
+      "title": "Child query criteria",
+      "description": "Captures the query criteria for the child resource",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/singularResource"
+        }
+      ],
+      "properties": {
+        "recursive": {
+          "type": "boolean",
+          "default": false,
+          "description": "Boolean value that specifies whether this query is a recursive expand on the current child resource query."
+        },
+        "name": {
+          "type": "string",
+          "description": "Rest alias name of the child resource this query belongs to."
+        },
+        "queryDef": {
+          "type": "object",
+          "description": "Query criteria to be applied on the child resource",
+          "allOf": [
+            {
+              "$ref": "#/definitions/queryDef"
+            }
+          ]
+        }
+      }
+    },
+    "selections": {
+      "type": "object",
+      "properties": {
+        "test": {
+        "type": "string"
+        },
+        "rest": {
+          "type": "integer"
+        }
+      }
+    },
+    "attachments": {
+      "title": "Attachments available",
+      "description": "List of attachments available for email action",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/attachmentDef"
+      },
+      "allOf": [
+        {
+          "$ref": "#/definitions/singularResource"
+        }
+      ]
+    },
+    "availableAttachmentsForMerge": {
+      "title": "Attachments available for merge",
+      "description": "List of attachments available to merge for an email or print action",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/attachmentDef"
+      },
+      "allOf": [
+        {
+          "$ref": "#/definitions/singularResource"
+        }
+      ]
+    },
+    "attachmentIds": {
+      "title": "Attachments to be merged",
+      "description": "List of attachments to be merged for an email action",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/attachmentIdDef"
+      },
+      "allOf": [
+        {
+          "$ref": "#/definitions/singularResource"
+        }
+      ]
+    },
+    "attachmentIdsForMerge": {
+      "title": "Attachments to be merged",
+      "description": "List of attachments to be merged for an email or print action",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/attachmentIdDef"
+      },
+      "allOf": [
+        {
+          "$ref": "#/definitions/singularResource"
+        }
+      ]
+    },
+    "generatedProposalAttachmentForMerge": {
+      "title": "Attachments Selected by Default",
+      "description": "Default selected attachment for an email or print action",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/attachmentDef"
+      },
+      "allOf": [
+        {
+          "$ref": "#/definitions/singularResource"
+        }
+      ]
+    },
+    "attachmentDef": {
+      "title": "Attachment properties",
+      "description": "Captures the id and name of the attachment",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/singularResource"
+        }
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "description": "ID for the attachment"
+        },
+        "name": {
+          "type": "string",
+          "description": "Name for the attachment"
+        }
+      }
+    },
+    "attachmentIdDef": {
+      "title": "Attachment properties",
+      "description": "Captures the id of the attachment",
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/singularResource"
+        }
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "description": "ID for the attachment"
+        }
+      }
+    }
+  }
+}
