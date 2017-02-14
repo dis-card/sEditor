@@ -1,4 +1,4 @@
-﻿{
+{
   "$schema": "http://json-schema.org/draft-04/hyper-schema#",
   "allOf": [
     {
@@ -281,11 +281,6 @@
       "title": "Query Definition",
       "description": "Captures the query definition for the current resource request",
       "type": "object",
-      "allOf": [
-        {
-          "$ref": "#/definitions/singularResource"
-        }
-      ],
       "properties": {
         "totalResults": {
           "type": "boolean",
@@ -373,11 +368,6 @@
       "title": "Child query criteria",
       "description": "Captures the query criteria for the child resource",
       "type": "object",
-      "allOf": [
-        {
-          "$ref": "#/definitions/singularResource"
-        }
-      ],
       "properties": {
         "recursive": {
           "type": "boolean",
@@ -403,7 +393,7 @@
       "type": "object",
       "properties": {
         "test": {
-        "type": "string"
+          "type": "string"
         },
         "rest": {
           "type": "integer"
