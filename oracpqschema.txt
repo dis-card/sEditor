@@ -381,11 +381,8 @@
         "queryDef": {
           "type": "object",
           "description": "Query criteria to be applied on the child resource",
-          "allOf": [
-            {
-              "$ref": "#/definitions/queryDef"
-            }
-          ]
+          "$ref": "#/definitions/queryDef"
+          
         }
       }
     },
